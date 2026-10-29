@@ -237,6 +237,119 @@ button, input, select {
   white-space: nowrap;
 }
 
+/* =============================================
+   SUBJECT SELECTOR
+   ============================================= */
+.subject-select {
+  width: 100%;
+}
+
+.subject-header-title {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.sub-label {
+  font-size: clamp(0.72rem, 1.8vw, 0.8rem);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-weight: 700;
+  color: var(--accent2);
+}
+
+.subject-cards {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: clamp(8px, 1.5vw, 12px);
+  width: 100%;
+}
+
+.subject-card {
+  background: var(--bg2);
+  border: 2px solid var(--border);
+  border-radius: var(--radius);
+  padding: clamp(14px, 2.2vw, 18px) clamp(8px, 1.4vw, 12px);
+  cursor: pointer;
+  transition: all 0.22s cubic-bezier(0.2, 0.8, 0.2, 1);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  position: relative;
+  user-select: none;
+  min-width: 0;
+}
+
+@media (hover: hover) {
+  .subject-card:hover {
+    border-color: var(--subj-accent, var(--accent));
+    transform: translateY(-2px);
+    background: var(--bg3-hover);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+  }
+}
+
+.subject-card:active {
+  transform: scale(0.97);
+}
+
+.subject-card.selected {
+  border-color: var(--subj-accent, var(--accent));
+  background: var(--subj-bg, rgba(108, 99, 255, 0.14));
+  box-shadow: 0 0 20px var(--subj-glow, rgba(108, 99, 255, 0.25));
+}
+
+.subject-icon {
+  font-size: clamp(1.4rem, 3.2vw, 1.9rem);
+  line-height: 1;
+  transition: transform 0.2s ease;
+}
+
+.subject-card:hover .subject-icon {
+  transform: scale(1.12);
+}
+
+.subject-name {
+  font-size: clamp(0.75rem, 1.8vw, 0.86rem);
+  font-weight: 700;
+  color: var(--text);
+  line-height: 1.25;
+  text-align: center;
+  white-space: normal;
+}
+
+.subject-count-pill {
+  font-size: clamp(0.62rem, 1.4vw, 0.68rem);
+  color: var(--text-muted);
+  background: rgba(255, 255, 255, 0.06);
+  padding: 2px 7px;
+  border-radius: 100px;
+  font-weight: 600;
+  margin-top: 2px;
+  white-space: nowrap;
+}
+
+.subject-card.selected .subject-count-pill {
+  background: var(--subj-pill-bg, rgba(108, 99, 255, 0.25));
+  color: var(--subj-accent, var(--accent2));
+}
+
+.subject-card.disabled {
+  opacity: 0.38;
+  cursor: not-allowed;
+  filter: grayscale(0.6);
+}
+
+.subject-card.disabled:hover {
+  transform: none;
+  border-color: var(--border);
+  background: var(--bg2);
+  box-shadow: none;
+}
+
 /* Mode cards */
 .mode-select {
   width: 100%;
@@ -527,12 +640,37 @@ button, input, select {
   to   { opacity: 1; transform: translateY(0); }
 }
 
+.header-subject-tag {
+  font-size: clamp(0.72rem, 1.8vw, 0.8rem);
+  font-weight: 700;
+  color: var(--accent2);
+  background: rgba(108, 99, 255, 0.14);
+  border: 1px solid rgba(108, 99, 255, 0.3);
+  padding: 4px 10px;
+  border-radius: 100px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
 .q-meta {
   display: flex;
   gap: 8px;
   align-items: center;
   flex-wrap: wrap;
   margin-bottom: clamp(14px, 2.5vw, 20px);
+}
+
+.q-subject {
+  font-size: clamp(0.68rem, 1.6vw, 0.74rem);
+  font-weight: 700;
+  color: var(--accent2);
+  background: rgba(108, 99, 255, 0.15);
+  border: 1px solid rgba(108, 99, 255, 0.35);
+  border-radius: 6px;
+  padding: 3px 9px;
+  flex-shrink: 0;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
 }
 
 .q-number {
@@ -854,6 +992,20 @@ button, input, select {
   line-height: 1;
 }
 
+.results-subject-pill {
+  font-size: clamp(0.76rem, 1.8vw, 0.85rem);
+  font-weight: 700;
+  color: var(--accent2);
+  background: rgba(108, 99, 255, 0.16);
+  border: 1px solid rgba(108, 99, 255, 0.35);
+  padding: 5px 16px;
+  border-radius: 100px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-top: -6px;
+  margin-bottom: -10px;
+}
+
 @keyframes bounceIn {
   0%   { transform: scale(0); opacity: 0; }
   60%  { transform: scale(1.15); opacity: 1; }
@@ -1018,6 +1170,85 @@ button, input, select {
 }
 
 /* =============================================
+   APP FOOTER
+   ============================================= */
+.app-footer {
+  width: 100%;
+  margin-top: clamp(20px, 4vw, 32px);
+  padding-top: clamp(16px, 3vw, 22px);
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.results-footer {
+  margin-top: clamp(16px, 3vw, 24px);
+  padding-top: clamp(14px, 2.5vw, 18px);
+}
+
+.footer-content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  font-size: clamp(0.78rem, 1.9vw, 0.86rem);
+  color: var(--text-muted);
+}
+
+.footer-credit {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.author-name {
+  color: #f1f5f9;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.footer-linkedin-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 6px 14px;
+  border-radius: 100px;
+  background: rgba(10, 102, 194, 0.12);
+  border: 1px solid rgba(10, 102, 194, 0.35);
+  color: #60a5fa;
+  font-weight: 600;
+  font-size: clamp(0.72rem, 1.8vw, 0.78rem);
+  text-decoration: none;
+  transition: all 0.22s ease;
+  user-select: none;
+}
+
+.footer-linkedin-btn svg {
+  fill: #0a66c2;
+  transition: fill 0.22s ease, transform 0.22s ease;
+  flex-shrink: 0;
+}
+
+.footer-linkedin-btn:hover {
+  background: rgba(10, 102, 194, 0.24);
+  border-color: #0a66c2;
+  color: #93c5fd;
+  transform: translateY(-1.5px);
+  box-shadow: 0 4px 14px rgba(10, 102, 194, 0.35);
+}
+
+.footer-linkedin-btn:hover svg {
+  fill: #38bdf8;
+  transform: scale(1.1);
+}
+
+.footer-linkedin-btn:active {
+  transform: translateY(0);
+}
+
+/* =============================================
    REVIEW SCREEN
    ============================================= */
 #screen-review {
@@ -1159,6 +1390,10 @@ button, input, select {
 
 /* Tablet & Smaller Desktops (< 900px) */
 @media (max-width: 900px) {
+  .subject-cards {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
   .mode-cards {
     grid-template-columns: repeat(2, 1fr);
   }
@@ -1166,6 +1401,19 @@ button, input, select {
 
 /* Mobile & Phablet (< 600px) */
 @media (max-width: 600px) {
+  .subject-cards {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+  }
+
+  .subject-cards .subject-card:last-child:nth-child(odd) {
+    grid-column: span 2;
+  }
+
+  .header-subject-tag {
+    display: none;
+  }
+
   .mode-cards {
     grid-template-columns: repeat(2, 1fr);
     gap: 8px;

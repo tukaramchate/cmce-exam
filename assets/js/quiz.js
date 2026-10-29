@@ -1,34 +1,217 @@
 /* =============================================
-   CDAC Java Quiz – quiz.js
-   Data is loaded from quiz-data-inline.js (QUIZ_DATA constant)
+   CDAC Mock Exam – quiz.js
+   Multi-Subject Quiz Engine
    ============================================= */
 
+/* ---------- Subject Configuration ---------- */
+const SUBJECT_CONFIG = [
+  {
+    id: 'java',
+    name: 'Core Java',
+    shortName: 'Java',
+    icon: '☕',
+    badge: 'CDAC PGCP-AC · Java 17',
+    dataVar: 'QUIZ_DATA',
+    accent: '#f59e0b',
+    accentRgb: '245, 158, 11',
+    gradient: 'linear-gradient(135deg, #f59e0b, #f97316)',
+  },
+  {
+    id: 'database',
+    name: 'Database',
+    shortName: 'DBMS',
+    icon: '🗄️',
+    badge: 'CDAC PGCP-AC · DBMS',
+    dataVar: 'QUIZ_DATA_DATABASE',
+    accent: '#3b82f6',
+    accentRgb: '59, 130, 246',
+    gradient: 'linear-gradient(135deg, #3b82f6, #6366f1)',
+  },
+  {
+    id: 'cpp',
+    name: 'C++',
+    shortName: 'C++',
+    icon: '⚙️',
+    badge: 'CDAC PGCP-AC · C++',
+    dataVar: 'QUIZ_DATA_CPP',
+    accent: '#06b6d4',
+    accentRgb: '6, 182, 212',
+    gradient: 'linear-gradient(135deg, #06b6d4, #0ea5e9)',
+  },
+  {
+    id: 'dsa',
+    name: 'Algorithms & Data Structures',
+    shortName: 'DSA',
+    icon: '🌳',
+    badge: 'CDAC PGCP-AC · DSA',
+    dataVar: 'QUIZ_DATA_DSA',
+    accent: '#22c55e',
+    accentRgb: '34, 197, 94',
+    gradient: 'linear-gradient(135deg, #22c55e, #10b981)',
+  },
+  {
+    id: 'webprog',
+    name: 'Web Programming',
+    shortName: 'Web',
+    icon: '🌐',
+    badge: 'CDAC PGCP-AC · Web',
+    dataVar: 'QUIZ_DATA_WEBPROG',
+    accent: '#a855f7',
+    accentRgb: '168, 85, 247',
+    gradient: 'linear-gradient(135deg, #a855f7, #8b5cf6)',
+  },
+];
+
 /* ---------- State ---------- */
-let allQuestions   = [];
-let quizQuestions  = [];   // subset for current session
-let currentIdx     = 0;
-let userAnswers    = [];   // index of chosen option, or -1 if skipped
-let answered       = [];   // boolean – has this question been answered?
-let correct        = 0;
-let wrong          = 0;
-let selectedMode   = 'all';
-let selectedSection= null;
-let sections       = [];
+let currentSubject  = null;   // SUBJECT_CONFIG entry
+let allQuestions    = [];
+let quizQuestions   = [];     // subset for current session
+let currentIdx      = 0;
+let userAnswers     = [];     // index of chosen option, or -1 if skipped
+let answered        = [];     // boolean – has this question been answered?
+let correct         = 0;
+let wrong           = 0;
+let selectedMode    = 'all';
+let selectedSection = null;
+let sections        = [];
+
+/* ---------- Subject Data Helper ---------- */
+function getSubjectData(subj) {
+  if (typeof window !== 'undefined' && typeof window[subj.dataVar] !== 'undefined' && window[subj.dataVar] !== null) {
+    return window[subj.dataVar];
+  }
+  try {
+    const val = (0, eval)(subj.dataVar);
+    if (val && typeof val === 'object') {
+      if (typeof window !== 'undefined') window[subj.dataVar] = val;
+      return val;
+    }
+  } catch (e) {
+    // not in scope
+  }
+  return null;
+}
 
 /* ---------- Boot ---------- */
 (function init() {
-  if (typeof QUIZ_DATA === 'undefined') {
-    alert('⚠️ Quiz data not found. Make sure quiz-data-inline.js is in the same folder.');
-    return;
+  buildSubjectCards();
+  // Auto-select first available subject
+  const firstAvailable = SUBJECT_CONFIG.find(s => !!getSubjectData(s));
+  if (firstAvailable) {
+    selectSubject(firstAvailable.id);
+  } else {
+    alert('⚠️ No quiz data found. Make sure at least one data file is loaded.');
   }
-  allQuestions = QUIZ_DATA.questions;
-  sections     = QUIZ_DATA.sections;
-  buildSectionGrid();
 })();
+
+/* ---------- Subject Cards ---------- */
+function buildSubjectCards() {
+  const container = document.getElementById('subject-cards');
+  if (!container) return;
+  container.innerHTML = '';
+
+  SUBJECT_CONFIG.forEach(subj => {
+    const data = getSubjectData(subj);
+    const hasData = !!data;
+    const qCount = data ? (data.questions || []).length : 0;
+
+    const card = document.createElement('div');
+    card.className = 'subject-card' + (hasData ? '' : ' disabled');
+    card.dataset.subjectId = subj.id;
+    card.style.setProperty('--subj-accent', subj.accent);
+    card.style.setProperty('--subj-bg', `rgba(${subj.accentRgb}, 0.12)`);
+    card.style.setProperty('--subj-glow', `rgba(${subj.accentRgb}, 0.25)`);
+    card.style.setProperty('--subj-pill-bg', `rgba(${subj.accentRgb}, 0.22)`);
+
+    if (hasData) {
+      card.onclick = () => selectSubject(subj.id);
+    }
+
+    card.innerHTML = `
+      <div class="subject-icon">${subj.icon}</div>
+      <div class="subject-name">${subj.name}</div>
+      <div class="subject-count-pill">${hasData ? qCount + ' Qs' : 'Coming Soon'}</div>
+    `;
+    container.appendChild(card);
+  });
+}
+
+function selectSubject(subjectId) {
+  const subj = SUBJECT_CONFIG.find(s => s.id === subjectId);
+  if (!subj) return;
+
+  const data = getSubjectData(subj);
+  if (!data) return;
+
+  currentSubject = subj;
+  allQuestions   = data.questions || [];
+  sections       = data.sections || [];
+
+  // Highlight selected card
+  document.querySelectorAll('.subject-card').forEach(c => c.classList.remove('selected'));
+  const selectedCard = document.querySelector(`.subject-card[data-subject-id="${subjectId}"]`);
+  if (selectedCard) selectedCard.classList.add('selected');
+
+  // Update home screen UI
+  updateHomeUI();
+  buildSectionGrid();
+}
+
+function updateHomeUI() {
+  if (!currentSubject) return;
+  const data = window[currentSubject.dataVar];
+  const qCount = allQuestions.length;
+  const secCount = sections.length;
+  const types = new Set(allQuestions.map(q => q.type));
+
+  // Badge
+  const badge = document.getElementById('subject-badge');
+  if (badge) badge.textContent = currentSubject.badge;
+
+  // Title
+  const titleEl = document.getElementById('home-title');
+  if (titleEl) {
+    titleEl.innerHTML = `${currentSubject.name}<br/><span class="gradient-text" id="home-title-highlight">MCQ Practice</span>`;
+  }
+
+  // Subtitle
+  const subtitle = document.getElementById('home-subtitle');
+  if (subtitle) {
+    subtitle.textContent = `${qCount} medium-to-hard questions across ${secCount} sections. Instant feedback, detailed explanations, and section-wise analytics.`;
+  }
+
+  // Stats
+  const statQ = document.getElementById('stat-questions');
+  if (statQ) statQ.textContent = qCount;
+  const statS = document.getElementById('stat-sections');
+  if (statS) statS.textContent = secCount;
+  const statT = document.getElementById('stat-types');
+  if (statT) statT.textContent = types.size;
+
+  // Mode descriptions
+  const modeAll = document.getElementById('mode-desc-all');
+  if (modeAll) modeAll.textContent = `All ${qCount} questions`;
+
+  const randomCount = Math.min(50, qCount);
+  const modeRandom = document.getElementById('mode-desc-random');
+  if (modeRandom) modeRandom.textContent = `${randomCount} random Qs`;
+  const modeNameQuick = document.getElementById('mode-name-quick');
+  if (modeNameQuick) modeNameQuick.textContent = `Quick ${randomCount}`;
+
+  // Reset mode selection
+  selectedMode = 'all';
+  selectedSection = null;
+  document.querySelectorAll('.mode-card').forEach(c => c.classList.remove('selected'));
+  const allModeCard = document.querySelector('.mode-card[data-mode="all"]');
+  if (allModeCard) allModeCard.classList.add('selected');
+  const picker = document.getElementById('section-picker');
+  if (picker) picker.style.display = 'none';
+}
 
 /* ---------- Home – section grid ---------- */
 function buildSectionGrid() {
   const grid = document.getElementById('section-grid');
+  if (!grid) return;
   grid.innerHTML = '';
   sections.forEach(sec => {
     const btn = document.createElement('button');
@@ -63,6 +246,10 @@ function toggleSection(btn, secId) {
 
 /* ---------- Start quiz ---------- */
 function startQuiz() {
+  if (!currentSubject) {
+    alert('Please select a subject first.');
+    return;
+  }
   if (selectedMode === 'section' && !selectedSection) {
     alert('Please select a section first.');
     return;
@@ -73,7 +260,8 @@ function startQuiz() {
   if (selectedMode === 'section') {
     pool = pool.filter(q => q.section === selectedSection);
   } else if (selectedMode === 'random50') {
-    pool = shuffleArray(pool).slice(0, 50);
+    const count = Math.min(50, pool.length);
+    pool = shuffleArray(pool).slice(0, count);
   } else if (selectedMode === 'trap') {
     pool = pool.filter(q => q.type === 'Trap');
   }
@@ -87,6 +275,10 @@ function startQuiz() {
   correct       = 0;
   wrong         = 0;
 
+  // Update quiz header with subject tag
+  const headerTag = document.getElementById('header-subject-tag');
+  if (headerTag) headerTag.textContent = `${currentSubject.icon} ${currentSubject.shortName}`;
+
   showScreen('screen-quiz');
   renderQuestion();
 }
@@ -99,8 +291,14 @@ function renderQuestion() {
   const q   = quizQuestions[currentIdx];
   const sec = sections.find(s => s.id === q.section);
 
+  // Subject tag
+  const subjEl = document.getElementById('q-subject');
+  if (subjEl && currentSubject) {
+    subjEl.textContent = `${currentSubject.icon} ${currentSubject.shortName}`;
+  }
+
   // Meta
-  document.getElementById('q-number').textContent = `Q${q.id}`;
+  document.getElementById('q-number').textContent = q.code ? `Q${q.id} · ${q.code}` : `Q${q.id}`;
   const typeEl = document.getElementById('q-type');
   typeEl.textContent = q.type;
   typeEl.className = `q-type ${q.type}`;
@@ -157,8 +355,8 @@ function formatQuestionText(text) {
 
   const prose = escapeHtml(parts[0]);
   const rest  = parts.slice(1).join('\n\n');
-  // If rest looks like code, wrap it
-  if (/[{};]|System\.|class |int |String |void |\->|\.stream/.test(rest)) {
+  // Detect code patterns across multiple languages
+  if (/[{};]|System\.|class |int |String |void |->|\.stream|cout|cin|#include|printf|scanf|SELECT |CREATE |INSERT |DELETE |UPDATE |FROM |WHERE |<html|<div|<script|function |var |let |const |=>/.test(rest)) {
     return `${prose}<code class="code-block">${escapeHtml(rest)}</code>`;
   }
   return escapeHtml(text);
@@ -265,6 +463,12 @@ function showResults() {
   const skipped = answered.filter((a, i) => a && userAnswers[i] === -1).length;
   const pct     = Math.round((correct / total) * 100);
 
+  // Subject pill
+  const subjPill = document.getElementById('results-subject-pill');
+  if (subjPill && currentSubject) {
+    subjPill.textContent = `${currentSubject.icon} ${currentSubject.name} Exam`;
+  }
+
   // Trophy / title
   let trophy = '🏆', title = 'Excellent!';
   if (pct >= 85)      { trophy = '🏆'; title = 'Outstanding!'; }
@@ -358,7 +562,7 @@ function reviewQuiz() {
 
     item.innerHTML = `
       <div class="rv-header">
-        <span class="rv-num">Q${q.id}</span>
+        <span class="rv-num">${q.code ? `Q${q.id} · ${q.code}` : `Q${q.id}`}</span>
         <span class="q-type ${q.type}" style="font-size:.68rem">${q.type}</span>
         <span class="rv-status ${isSkipped ? 'skip' : isCorrect ? 'correct' : 'wrong'}">${isSkipped ? 'Skipped' : isCorrect ? 'Correct' : 'Wrong'}</span>
       </div>

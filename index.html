@@ -3,11 +3,11 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <title>CDAC Java 17 Quiz – Core Java MCQ Practice Bank</title>
-  <meta name="description" content="Interactive MCQ Quiz for CDAC PGCP-AC Java 17 exam preparation. 200 medium-to-hard questions covering all sections." />
+  <title>CDAC Mock Exam – Java, Database, C++, Data Structure & Web Programming</title>
+  <meta name="description" content="Interactive MCQ Practice Exam for CDAC PGCP-AC preparation. Comprehensive practice bank for Core Java, Database (DBMS), C++, Data Structures, and Web Programming." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="assets/css/style.css" />
 </head>
 <body>
 
@@ -19,14 +19,22 @@
     <div class="orb orb-3"></div>
   </div>
   <div class="home-content">
-    <div class="badge">CDAC PGCP-AC · Java 17</div>
-    <h1 class="home-title">Core Java<br/><span class="gradient-text">MCQ Practice</span></h1>
-    <p class="home-subtitle">200 medium-to-hard questions across 12 sections. Instant feedback, detailed explanations, and section-wise analytics.</p>
+    <div class="badge" id="subject-badge">CDAC PGCP-AC · Java 17</div>
+    <h1 class="home-title" id="home-title">Core Java<br/><span class="gradient-text" id="home-title-highlight">MCQ Practice</span></h1>
+    <p class="home-subtitle" id="home-subtitle">200 medium-to-hard questions across 12 sections. Instant feedback, detailed explanations, and section-wise analytics.</p>
+
+    <!-- Subject Selector -->
+    <div class="subject-select">
+      <div class="subject-header-title">
+        <span class="sub-label">Select Subject</span>
+      </div>
+      <div class="subject-cards" id="subject-cards"></div>
+    </div>
 
     <div class="stats-row">
-      <div class="stat-card"><span class="stat-num">200</span><span class="stat-lbl">Questions</span></div>
-      <div class="stat-card"><span class="stat-num">12</span><span class="stat-lbl">Sections</span></div>
-      <div class="stat-card"><span class="stat-num">4</span><span class="stat-lbl">Types</span></div>
+      <div class="stat-card"><span class="stat-num" id="stat-questions">200</span><span class="stat-lbl">Questions</span></div>
+      <div class="stat-card"><span class="stat-num" id="stat-sections">12</span><span class="stat-lbl">Sections</span></div>
+      <div class="stat-card"><span class="stat-num" id="stat-types">4</span><span class="stat-lbl">Types</span></div>
     </div>
 
     <div class="mode-select">
@@ -35,7 +43,7 @@
         <div class="mode-card selected" data-mode="all" onclick="selectMode(this,'all')">
           <div class="mode-icon">📚</div>
           <div class="mode-name">Full Test</div>
-          <div class="mode-desc">All 200 questions</div>
+          <div class="mode-desc" id="mode-desc-all">All 200 questions</div>
         </div>
         <div class="mode-card" data-mode="section" onclick="selectMode(this,'section')">
           <div class="mode-icon">📂</div>
@@ -44,8 +52,8 @@
         </div>
         <div class="mode-card" data-mode="random50" onclick="selectMode(this,'random50')">
           <div class="mode-icon">🎲</div>
-          <div class="mode-name">Quick 50</div>
-          <div class="mode-desc">50 random Qs</div>
+          <div class="mode-name" id="mode-name-quick">Quick Test</div>
+          <div class="mode-desc" id="mode-desc-random">50 random Qs</div>
         </div>
         <div class="mode-card" data-mode="trap" onclick="selectMode(this,'trap')">
           <div class="mode-icon">⚡</div>
@@ -64,6 +72,19 @@
       <span>Start Quiz</span>
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
     </button>
+
+    <!-- App Footer -->
+    <footer class="app-footer">
+      <div class="footer-content">
+        <span class="footer-credit">Developed by <strong class="author-name">Tukaram Chate</strong></span>
+        <a href="https://www.linkedin.com/in/tukaram-chate/" target="_blank" rel="noopener noreferrer" class="footer-linkedin-btn" aria-label="Tukaram Chate LinkedIn Profile">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.28 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.75M6.46 10.9h2.77v8.37H6.46v-8.37M7.84 6.7a1.64 1.64 0 1 0 0 3.28 1.64 1.64 0 0 0 0-3.28z"/>
+          </svg>
+          <span>Connect on LinkedIn</span>
+        </a>
+      </div>
+    </footer>
   </div>
 </div>
 
@@ -75,6 +96,7 @@
     <button class="btn-icon" onclick="exitQuiz()" title="Exit">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
     </button>
+    <div class="header-subject-tag" id="header-subject-tag">☕ Core Java</div>
     <div class="header-center">
       <div class="progress-wrap">
         <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
@@ -88,6 +110,7 @@
   <main class="quiz-main">
     <div class="question-card" id="question-card">
       <div class="q-meta">
+        <span class="q-subject" id="q-subject">Core Java</span>
         <span class="q-number" id="q-number">Q1</span>
         <span class="q-type" id="q-type">Output</span>
         <span class="q-section" id="q-section">Section 1</span>
@@ -117,6 +140,7 @@
 <div id="screen-results" class="screen">
   <div class="results-content">
     <div class="results-trophy" id="results-trophy">🏆</div>
+    <div class="results-subject-pill" id="results-subject-pill">Core Java Exam</div>
     <h2 class="results-title" id="results-title">Quiz Complete!</h2>
     <div class="results-score-circle">
       <svg viewBox="0 0 120 120" class="circle-svg">
@@ -144,6 +168,19 @@
       <button class="btn-primary" onclick="reviewQuiz()">📝 Review Answers</button>
       <button class="btn-secondary" onclick="goHome()">🏠 Home</button>
     </div>
+
+    <!-- Results Footer -->
+    <footer class="app-footer results-footer">
+      <div class="footer-content">
+        <span class="footer-credit">Developed by <strong class="author-name">Tukaram Chate</strong></span>
+        <a href="https://www.linkedin.com/in/tukaram-chate/" target="_blank" rel="noopener noreferrer" class="footer-linkedin-btn" aria-label="Tukaram Chate LinkedIn Profile">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.28 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.75M6.46 10.9h2.77v8.37H6.46v-8.37M7.84 6.7a1.64 1.64 0 1 0 0 3.28 1.64 1.64 0 0 0 0-3.28z"/>
+          </svg>
+          <span>Connect on LinkedIn</span>
+        </a>
+      </div>
+    </footer>
   </div>
 </div>
 
@@ -159,7 +196,11 @@
   <div class="review-list" id="review-list"></div>
 </div>
 
-<script src="quiz-data-inline.js"></script>
-<script src="quiz.js"></script>
+<script src="assets/js/data/quiz-data-java.js"></script>
+<script src="assets/js/data/quiz-data-database.js"></script>
+<script src="assets/js/data/quiz-data-cpp.js"></script>
+<script src="assets/js/data/quiz-data-dsa.js"></script>
+<script src="assets/js/data/quiz-data-webprog.js"></script>
+<script src="assets/js/quiz.js?v=2"></script>
 </body>
 </html>
