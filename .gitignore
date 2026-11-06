@@ -12,6 +12,7 @@ node_modules/
 dist/
 build/
 docs/
+data/DBMS_500_MCQ_by_session.json
 
 # Local logs and environment files
 *.log
